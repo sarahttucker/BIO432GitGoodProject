@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #the goal of this script is to drop all possible contaminants from the map.csv datafile
 
   library(dplyr)
@@ -20,6 +21,24 @@
   
   #finally, we readd the sample column and move it to the first position
   OTU_final$sample=xlegend
+=======
+  library(seqinr)
+  library(dplyr)
+  
+  
+  x=read.fasta("otu.fa")
+  x=read.csv("map.csv")
+  xlegend=x$sample
+  xnum=select (x,-c(sample))
+  xnum[xnum<5]=0
+  Drop<-colSums(xnum) < 5
+  sum(Drop)
+  xt=as.data.frame(t(xnum))
+  OTU_reduced<-xt[!Drop,]
+  OTU_final=as.data.frame(t(OTU_reduced))
+  OTU_final$sample=xlegend
+  
+>>>>>>> a4c8e96d972fd60072bbe0a3900fb26bc6c23d2b
   OTU_final <- OTU_final %>%
     select(sample, everything())
 write.csv(OTU_final,"DropMap.csv")
