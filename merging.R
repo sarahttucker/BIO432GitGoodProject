@@ -19,7 +19,3 @@ IDs <- gsub(".*-", "", metsum$seqname)
 editsample <- gsub("_.*", "", reads$sample)
 
 spliteditsample <- strsplit(IDs, split = "")
-
-for (i in spliteditsample) {
-  if ()
-}
