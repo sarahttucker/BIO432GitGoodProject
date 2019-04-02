@@ -4,7 +4,7 @@ library(plyr)
 library(dplyr)
 
 reads <- read.csv("DropMap.csv")
-metsum <- read.csv("summary_metadata_filtered.csv")
+metsum <- read.csv("summary_metadata.csv")
 dist <- read.csv("MBTrial_tray-stem_distances.csv")
 
 metsum <- join(metsum, dist, by = "uid")
