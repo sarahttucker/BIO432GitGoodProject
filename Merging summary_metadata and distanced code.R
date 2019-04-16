@@ -1,3 +1,4 @@
+#combines the distance column of "MBTrial_...distance.csv" into "summary_metadat.csv"
 Dist<-read.csv("MBTrial_tray-stem_distances.csv")
 Summary<-read.csv("summary_metadata.csv")
 Summary["distance"]<-NA
