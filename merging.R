@@ -38,10 +38,5 @@ colnames(metsum)
 sumtab <- join(metsum, reads, by = "sample")
 str(sumtab)
 
-<<<<<<< HEAD
-#Writes central dataset with all required information for the project
-=======
-#Writes central dataset with all required information
->>>>>>> f8c303ca0699bc15cfa24c1e41e9c66beff2beb6
 write.csv(sumtab, file = "summary_table.csv")
 
