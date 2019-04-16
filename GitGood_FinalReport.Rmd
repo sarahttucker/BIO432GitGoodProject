@@ -1,6 +1,6 @@
 ---
 title: "Arthropod Communities Summary Report"
-author: "Pallavi"
+author: "c(Sarah, Pallavi, Kai, Nikita, Liam)"
 date: '2019-04-16'
 output: html_document
 ---
@@ -98,7 +98,7 @@ The data was cleaned and grouped into summary_table.csv which included OTU reads
 
 ###  Question 1
 
-By creating a neighbour joining tree we were able to elucidate the relationship between species composition and size class (Figure 1). If there was a correlation between the two variables, we would expect to see size classes grouping closely together on the tree. However, based on our analysis, we do not see any evidence of a relationship between species composition and size class; this can be seen by the seemingly random distribution of size classes within the tree. 
+By creating a neighbour joining tree we were able to elucidate the relationship between species composition and size class (Fig. 1). If there was a correlation between the two variables, we would expect to see size classes grouping closely together on the tree. However, based on our analysis, we do not see any evidence of a relationship between species composition and size class; this can be seen by the seemingly random distribution of size classes within the tree. 
 
 ```{r ggtree, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 
@@ -132,7 +132,7 @@ ggtree(Survey_tree,layout="rectangular") %<+% SizeVariable +
 ## written by Sarah, Liam, & Nikita
 ```
 
-Figure 1. Neighbour joining tree depicting the relationship between species composition and size class of organisms collected from a *Liquidambar styracaflua* tree canopy. The different colours correspond to differing size classes of the organisms collected. spool1: 1-3mm^2^, spool2: 3-9mm^2^, spool3: 9-36mm^2^, spool4: 26-75mm^2^. 
+**Figure 1.** Neighbour joining tree depicting the relationship between species composition and size class of organisms collected from a *Liquidambar styracaflua* tree canopy. The different colours correspond to differing size classes of the organisms collected. spool1: 1-3mm^2^, spool2: 3-9mm^2^, spool3: 9-36mm^2^, spool4: 26-75mm^2^. 
 
 
 ### Question 2
@@ -182,7 +182,7 @@ ggplot(data = PDat2, aes(x = NMDS1, y = NMDS2, colour = taxon), alpha=I(0.6)) +
 ## written by Kai & Pallavi
 ```
 
-Figure 2. NMDS plot on the effects of taxa groupings on arthropod community structure. The taxa of arthropods include Acari (Ac), Coleoptera (C), Formicidae (F), Araneae (Ar), Hymenoptera (Hy), Hemiptera (He), Diptera (D), and Collembola (Coll).
+**Figure 2.** NMDS plot on the effects of taxa groupings on arthropod community structure. The taxa of arthropods include Acari (Ac), Coleoptera (C), Formicidae (F), Araneae (Ar), Hymenoptera (Hy), Hemiptera (He), Diptera (D), and Collembola (Coll).
 
 ```{r distance NMDS plot, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 #Creates NMDS plot based on distance as opposed to taxon (above)
@@ -207,4 +207,5 @@ ggplot(data = PDat4, aes(x = NMDS1, y = NMDS2, colour = distance), alpha=I(0.6))
 ## written by Kai & Pallavi
 ```
 
-Figure 3. NMDS plot of the effects of distance of collection disk from the trunk (m) on arthropod community structure. 
+**Figure 3.** NMDS plot of the effects of distance of collection disk from the trunk (m) on arthropod community structure. 
+
