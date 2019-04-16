@@ -10,6 +10,7 @@ library(knitr)
 library(plyr)
 library(vegan)
 library(ggplot2)
+library(dplyr)
 ```
 
 # Background
@@ -17,6 +18,7 @@ library(ggplot2)
 The data used in this report came from a paper by [Creedy et al., 2019](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.4839). It contains Operational Taxonomic Unit (OTU) sequences from arthropods in a FASTA file format, as well as a .csv file reporting the number of reads of each OTU in each sequenced library. The occurrence of these OTUs were counted in samples gathered by placing 1m^2^ metal trays in the canopy and collecting organisms that fell into them after being fogged. In total, 13 tray samples were collected from an individual Liquidambar styracaflua tree canopy. 
 
 The files used for this analysis that were obtained from the corresponding study were the following:
+
 1. Map.csv
     * a table showing the number of reads of each OTU in a well
 2. Summary_metadata.csv
@@ -24,5 +26,146 @@ The files used for this analysis that were obtained from the corresponding study
 3. MBTrial_tray-stem_distances.csv
     * sample location in reference to base of tree
 
-The data was grouped in summary_table.csv which included OTU reads, stem distances, along with arthropod taxon and size distribution. 
+```{r remove potential contaminants,include = FALSE}
+#the goal of this script is to drop all possible contaminants from the map.csv datafile
+
+  x=read.csv("map.csv")
+  #first I extracted the sample name column and then removed it, so that we could work with exclusivly numeric data
+  xlegend=x$sample
+  xnum=select (x,-c(sample))
+  
+  #This sets all wells with less than 5 appearances of the otu to 0
+  xnum[xnum<5]=0
+  #we then dropped all the columns with less than 5 total appearances as these were likely just contaminants
+  Drop<-colSums(xnum) < 5
+  OTU_final=xnum[,!Drop]
+  
+  #finally, we readd the sample column and move it to the first position
+  OTU_final$sample=xlegend
+
+
+write.csv(OTU_final,"DropMap.csv")
+
+## written by Kai & Pallavi
+```
+
+```{r merge data, include = FALSE}
+#This script is what we used to merge the three different data files provided from DataDryad into a single central dataset
+
+reads <- read.csv("DropMap.csv")
+metsum <- read.csv("summary_metadata.csv")
+dist <- read.csv("MBTrial_tray-stem_distances.csv")
+
+#Adds a "dist" column onto metsum using "uid" to pair distances with the proper sample
+metsum <- join(metsum, dist, by = "uid")
+
+#removes uneeded data colums from "metsum"
+metsum <- select(metsum, -c("combinationnotes", "combi", "project", "subproject", "well", "angle"))
+#removes X from reads
+reads <- select(reads, -("X"))
+
+#Changes seqname column from "MBSeq_!-!!!" to"!!!"
+IDs <- gsub(".*-", "", metsum$seqname)
+#Removes placeholder "0" from IDs
+IDs2 <- gsub("0(.+)","\\1",IDs)
+#changes reads$sample to same format as IDs2 (no "0" placeholder)
+editsample <- gsub("_.*", "", reads$sample)
+
+#replaces original columns in metsun & reads with the above gsub commands
+metsum$seqname <- IDs2
+reads$sample <- editsample
+
+#joins reads and metsum by the matching sample values. This adds the otu reads into the correct row in sumtab
+colnames(metsum) <- c("X", "sample", "uid", "taxon", "size", "distance")
+
+sumtab <- join(metsum, reads, by = "sample")
+
+write.csv(sumtab, file = "summary_table.csv")
+
+## written by Kai & Pallavi
+```
+
+The data was cleaned and grouped into summary_table.csv which included OTU reads, stem distances, along with arthropod taxon and size distribution. 
+
+# Questions
+
+1. Is there a relationship between species composition and size class?
+2. What has a stronger effect on arthropod communities: the presence/absence of certain taxa, or sampling location?
+
+# Results
+
+###  Question 1
+
+```{r}
+
+```
+
+### Question 2
+
+
+
+```{r taxon NMDS plot, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+data <- read.csv("summary_table.csv")
+#turns "coleoptera" into a more managable value
+data$taxon <- gsub("coleoptera", "C", data$taxon)
+
+#check and set class of the object
+levels(data$taxon)
+data$taxon=as.character(data$taxon)
+#retreives all rows that match taxon values of "all" and "bulk", removes X clolumn
+x=grep("all|bulk",data$taxon)
+#removes all rows that do not match taxon = "C"
+Dat2<-data[-(x), ]
+#encodes taxon as a factor
+Dat2$taxon=as.factor(Dat2$taxon)
+levels(Dat2$taxon)
+data1 <- Dat2
+#returns list of selected elements
+data1[,1:7] <- NULL
+
+#computes dissilarity matrix
+data_dist <- vegdist(data1, method = "bray")
+#standardizes scaling
+set.seed(2)
+NMDSdat <- metaMDS(data_dist, k=2, trymax = 100)
+
+# create a dataframe with NMDS results 
+PDat <- data.frame(NMDS1=NMDSdat$point[,1], 
+                   NMDS2=NMDSdat$point[,2],
+                   taxon = Dat2$taxon) 
+PDat2 <- join(Dat2, PDat, by = "taxon") 
+
+
+# plot taxon effects
+ggplot(data = PDat2, aes(x = NMDS1, y = NMDS2, colour = taxon), alpha=I(0.6)) +  
+  geom_point(data=PDat2,aes(x=NMDS1,y=NMDS2),alpha=0.5) +
+  geom_polygon(data=PDat2,aes(x=NMDS1,y=NMDS2,fill=taxon,group=taxon),alpha=0.30) +
+  theme_classic()
+
+## written by Kai & Pallavi
+```
+
+
+```{r distance NMDS plot, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+#Creates NMDS plot based on distance as opposed to taxon (above)
+Data2 <- data
+Data2[,1:7] <- NULL
+data$distance <- as.factor(data$distance)
+
+data_dist2 <- vegdist(Data2, method = "bray")
+NMDSdat2 <- metaMDS(data_dist2, k=2, trymax = 100)
+
+# create a dataframe with NMDS results 
+PDat3 <- data.frame(NMDS1=NMDSdat2$point[,1], 
+                   NMDS2=NMDSdat2$point[,2],
+                   distance = data$distance) 
+PDat4 <- join(data, PDat3, by = "distance") 
+
+ggplot(data = PDat4, aes(x = NMDS1, y = NMDS2, colour = distance), alpha=I(0.6)) +  # plot distance effects
+  geom_point(data=PDat4,aes(x=NMDS1,y=NMDS2),alpha=0.5) +
+  geom_polygon(data=PDat4,aes(x=NMDS1,y=NMDS2,fill=distance,group=distance),alpha=0.30) +
+  theme_classic()
+
+## written by Kai & Pallavi
+```
 
