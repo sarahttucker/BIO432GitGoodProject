@@ -11,6 +11,8 @@ library(plyr)
 library(vegan)
 library(ggplot2)
 library(dplyr)
+library(ape)
+library(ggtree)
 ```
 
 # Background
@@ -96,13 +98,39 @@ The data was cleaned and grouped into summary_table.csv which included OTU reads
 
 ###  Question 1
 
-```{r}
+```{r ggtree, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 
+mainTab<-read.csv("summary_table.csv")
+
+#rmove anything that is isnt spool//d
+
+
+
+SizeVariable<-mainTab
+mainTab<-mainTab[-c(48:87),]
+mainTab<-mainTab[-grep("prop",mainTab$size),]
+mainTab<-mainTab[,-c(1:7)]
+
+mainTabDF<-as.data.frame(mainTab)
+
+Survey_dist<-vegdist(mainTabDF)
+Survey_tree<-nj(Survey_dist)
+
+
+
+ggtree(Survey_tree,layout="rectangular") %<+% SizeVariable +
+  geom_tiplab(aes(colour=size)) +
+  theme(legend.position="right")
+
+## written by Sarah, Liam, & Nikita
 ```
+
+Figure 1. Caption here
+
 
 ### Question 2
 
-
+Intro to NMDS plots
 
 ```{r taxon NMDS plot, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 data <- read.csv("summary_table.csv")
