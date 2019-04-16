@@ -1,0 +1,28 @@
+---
+title: "Arthropod Communities Summary Report"
+author: "Pallavi"
+date: '2019-04-16'
+output: html_document
+---
+
+```{r load libraries, include=FALSE}
+library(knitr)
+library(plyr)
+library(vegan)
+library(ggplot2)
+```
+
+# Background
+
+The data used in this report came from a paper by [Creedy et al., 2019](https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.4839). It contains Operational Taxonomic Unit (OTU) sequences from arthropods in a FASTA file format, as well as a .csv file reporting the number of reads of each OTU in each sequenced library. The occurrence of these OTUs were counted in samples gathered by placing 1m^2^ metal trays in the canopy and collecting organisms that fell into them after being fogged. In total, 13 tray samples were collected from an individual Liquidambar styracaflua tree canopy. 
+
+The files used for this analysis that were obtained from the corresponding study were the following:
+1. Map.csv
+    * a table showing the number of reads of each OTU in a well
+2. Summary_metadata.csv
+    * summary table of the sample data for each well
+3. MBTrial_tray-stem_distances.csv
+    * sample location in reference to base of tree
+
+The data was grouped in summary_table.csv which included OTU reads, stem distances, along with arthropod taxon and size distribution. 
+
