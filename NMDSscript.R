@@ -23,9 +23,8 @@ data1[,1:7] <- NULL
 #computes dissilarity matrix
 data_dist <- vegdist(data1, method = "bray")
 #standardizes scaling
-NMDSdat <- metaMDS(data_dist, k=2, trymax = 100)
-#sets random number generator seed
 set.seed(2)
+NMDSdat <- metaMDS(data_dist, k=2, trymax = 100)
 
 # create a dataframe with NMDS results 
 PDat <- data.frame(NMDS1=NMDSdat$point[,1], 
