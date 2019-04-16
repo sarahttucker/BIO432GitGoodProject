@@ -3,7 +3,7 @@ library(vegan)
 library(ggplot2)
 
 data <- read.csv("summary_table.csv")
-#turns "coleoptera into a more managable value
+#turns "coleoptera" into a more managable value
 data$taxon <- gsub("coleoptera", "C", data$taxon)
 
 #check and set class of the object
